@@ -1,0 +1,24 @@
+output "servidores_criados" {
+  description = "Nomes de todos os servidores web provisionados"
+  value       = keys(var.servidores_web)
+}
+
+output "total_servidores" {
+  description = "Quantidade total de servidores web"
+  value       = length(var.servidores_web)
+}
+
+output "banco_de_dados" {
+  description = "Nome e engine do banco de dados provisionado"
+  value       = "${var.banco_dados.nome} (${var.banco_dados.engine})"
+}
+
+output "ambiente_atual" {
+  description = "Ambiente em que a infraestrutura foi provisionada"
+  value       = var.ambiente
+}
+
+output "caminho_load_balancer" {
+  description = "Caminho do arquivo que representa o load balancer"
+  value       = local_file.load_balancer.filename
+}
