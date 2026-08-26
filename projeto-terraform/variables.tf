@@ -1,9 +1,11 @@
+# Define o ambiente em que a infraestrutura está sendo provisionada
 variable "ambiente" {
   description = "Nome do ambiente da infraestrutura (dev, homologacao, producao)"
   type        = string
   default     = "dev"
 }
 
+# Define o conjunto de servidores web, cada um com seu tipo de instancia e porta
 variable "servidores_web" {
   description = "Mapa de servidores web a serem provisionados"
   type = map(object({
@@ -26,6 +28,7 @@ variable "servidores_web" {
   }
 }
 
+# Define as configuracoes do banco de dados: nome, engine e porta
 variable "banco_dados" {
   description = "Configuração do banco de dados"
   type = object({
