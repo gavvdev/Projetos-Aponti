@@ -1,3 +1,4 @@
+# Bloco de configuração do Terraform, define a versão e qual provider vai ser usado para provisionar os recursos
 terraform {
   required_version = ">= 1.5.0"
 
@@ -9,6 +10,7 @@ terraform {
   }
 }
 
+# Recurso que simula os servidores web, criando um arquivo para cada servidor definido na variável servidores_web
 resource "local_file" "servidor_web" {
   for_each = var.servidores_web
 
@@ -25,6 +27,7 @@ resource "local_file" "servidor_web" {
   EOT
 }
 
+# Recurso que simula o banco de dados, criando um arquivo comas informações configuradas
 resource "local_file" "banco_dados" {
   filename = "${path.module}/infraestrutura/banco-dados/${var.banco_dados.nome}.txt"
 
@@ -39,6 +42,8 @@ resource "local_file" "banco_dados" {
   EOT
 }
 
+# Recurso que simula o load balancer, listando todos os servidores conectados a ele, depends_on garante que ele só é criado depois dos servidores 
+# e do banco de dados
 resource "local_file" "load_balancer" {
   filename = "${path.module}/infraestrutura/load-balancer/lb.txt"
 
