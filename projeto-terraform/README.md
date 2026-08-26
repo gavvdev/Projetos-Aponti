@@ -1,72 +1,39 @@
-# atv-terraform
+# Projeto Terraform - Infraestrutura Simulada
 
-Projeto individual criado para atividade em sala do curso de DevOps, utilizando **Terraform** com o provider `local` (não requer conta em nuvem, todos os recursos são arquivos criados na própria máquina).
+Projeto individual desenvolvido em sala, no curso de DevOps, usando Terraform com o provider local. Como não há conta AWS disponível, os recursos de nuvem (servidores, banco de dados e load balancer) são simulados através de arquivos locais, permitindo demonstrar na prática os principais conceitos do Terraform sem custo ou necessidade de conta em nuvem.
 
-## O que o projeto faz
+## O que o projeto cria
 
-- Cria um arquivo `info.txt` com informações do projeto.
-- Cria múltiplos arquivos de exemplo (`arquivo-1.txt`, `arquivo-2.txt`, ...), em uma quantidade definida por variável.
-- Expõe outputs com os caminhos dos arquivos criados.
+- 3 servidores web (web-01, web-02, web-03), cada um com tipo de instância e porta configuráveis
+- 1 banco de dados, com nome, engine e porta configuráveis
+- 1 load balancer, que lista os servidores conectados a ele (demonstra dependência entre recursos com depends_on)
 
-## Estrutura dos arquivos
+## Arquivos do projeto
 
-| Arquivo | Função |
-|---|---|
-| `main.tf` | Define o provider e os recursos (`local_file`) que serão criados |
-| `variables.tf` | Define as variáveis de entrada (diretório de saída, quantidade de arquivos, nome do projeto) |
-| `outputs.tf` | Define as saídas exibidas após o `apply` |
-| `.gitignore` | Evita subir arquivos de estado, cache do provider e a pasta de saída |
+- main.tf - provider e recursos (local_file)
+- variables.tf - variáveis de entrada (ambiente, servidores, banco de dados)
+- terraform.tfvars - valores usados nas variáveis
+- outputs.tf - saídas exibidas após o apply
+- .gitignore - evita subir estado do Terraform e a pasta gerada
 
-## Pré-requisitos
+## Sobre a conexão com a Cloud (AWS)
 
-- Terraform instalado ([instruções oficiais](https://developer.hashicorp.com/terraform/install))
-- Verificar instalação: `terraform version`
+Este projeto usa o provider local por não haver conta AWS disponível no momento. Para conectar um projeto Terraform à AWS, o processo seria:
 
-## Comandos utilizados (passo a passo)
+1. Criar uma conta AWS e um usuário IAM com permissões programáticas, gerando uma Access Key ID e uma Secret Access Key.
+2. Configurar as credenciais na máquina local, via AWS CLI (comando "aws configure") ou variáveis de ambiente (AWS_ACCESS_KEY_ID e AWS_SECRET_ACCESS_KEY).
+3. Trocar o bloco provider de "local" para "aws", informando a região desejada.
+4. Trocar os recursos "local_file" por recursos reais da AWS (ex: aws_instance para servidores, aws_db_instance para banco de dados, aws_lb para load balancer).
+5. Rodar terraform init, terraform plan e terraform apply normalmente — o Terraform usa as credenciais configuradas para se conectar e criar os recursos na AWS.
 
-1. **Inicializar o projeto** (baixa o provider `local` e prepara o diretório):
-   ```bash
-   terraform init
-   ```
+## Anotações / o que foi aprendido em aula
 
-2. **Validar a sintaxe dos arquivos**:
-   ```bash
-   terraform validate
-   ```
-
-3. **Formatar os arquivos** (padroniza identação/estilo):
-   ```bash
-   terraform fmt
-   ```
-
-4. **Ver o plano de execução** (o que será criado, sem aplicar ainda):
-   ```bash
-   terraform plan
-   ```
-
-5. **Aplicar e criar os recursos**:
-   ```bash
-   terraform apply
-   ```
-   Digite `yes` quando solicitado para confirmar.
-
-6. **Conferir os outputs**:
-   ```bash
-   terraform output
-   ```
-
-7. **Destruir os recursos** (limpar tudo o que foi criado):
-   ```bash
-   terraform destroy
-   ```
-
-## Personalizando a execução
-
-É possível alterar as variáveis sem editar o código, direto na linha de comando:
-```bash
-terraform apply -var="quantidade_arquivos=5" -var="nome_projeto=meu-projeto"
-```
-
-## Resultado esperado
-
-Após o `apply`, uma pasta `saida/` é criada localmente contendo os arquivos `.txt` gerados pelo Terraform, e o terminal exibe os outputs definidos em `outputs.tf`.
+- O Terraform trabalha com o conceito de Infraestrutura como Código: a infraestrutura é descrita em arquivos de texto (.tf), versionáveis e reutilizáveis.
+- O bloco provider define com qual serviço/cloud o Terraform vai se comunicar.
+- O bloco resource define o que será criado.
+- Variáveis (variable) tornam o código reutilizável, evitando valores fixos ("hardcoded") no meio do código.
+- Outputs (output) mostram informações relevantes sobre o que foi criado, sem precisar abrir o console da nuvem.
+- O arquivo .tfstate guarda o "retrato" do que já foi criado — por isso é sensível e não deve ir para o repositório.
+- for_each permite criar múltiplos recursos parecidos a partir de um mapa, evitando repetir código.
+- depends_on garante que um recurso só seja criado depois de outro, quando a dependência não é automática.
+- Os comandos seguem sempre a mesma ordem: init (prepara o projeto) → plan (mostra o que vai mudar) → apply (executa) → destroy (remove tudo, se necessário).
