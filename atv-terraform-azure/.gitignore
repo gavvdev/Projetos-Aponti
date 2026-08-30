@@ -1,0 +1,39 @@
+# =============================================================================
+# .gitignore
+# Evita subir para o GitHub arquivos locais, sensíveis ou gerados
+# automaticamente pelo Terraform.
+# =============================================================================
+
+# Diretório local com plugins/providers baixados
+.terraform/
+
+# Lock file de providers (opcional versionar, aqui optamos por ignorar)
+.terraform.lock.hcl
+
+# Arquivos de estado do Terraform (contêm dados sensíveis do ambiente real)
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Arquivos de plano gerados pelo "terraform plan -out=..."
+*.tfplan
+
+# Variáveis sensíveis que não devem ir para o repositório
+# (o terraform.tfvars deste projeto é só exemplo/estudo, mas em projetos
+# reais com credenciais/segredos ele deve ficar aqui também)
+*.auto.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Arquivos de log e crash do Terraform
+crash.log
+crash.*.log
+
+# Variáveis de ambiente locais
+.env
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
