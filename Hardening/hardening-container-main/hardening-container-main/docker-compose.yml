@@ -1,0 +1,14 @@
+services:
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+
+  banco:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sistema
+    ports:
+      - "3306:3306"
