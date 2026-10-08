@@ -1,0 +1,10 @@
+# Segredos locais
+.env
+.env.*
+!.env.example
+
+# Dependências e lixo
+node_modules/
+npm-debug.log*
+*.log
+.DS_Store

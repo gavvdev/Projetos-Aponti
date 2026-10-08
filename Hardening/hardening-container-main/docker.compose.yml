@@ -1,0 +1,58 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"           
+    environment:
+      DB_HOST: banco
+      DB_USER: ${DB_USER:?defina DB_USER no .env}
+      DB_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD no .env}
+      DB_NAME: ${DB_NAME:?defina DB_NAME no .env}
+    depends_on:
+      banco:
+        condition: service_healthy
+    networks: [frontend, backend]
+    read_only: true            
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]            
+    security_opt:
+      - no-new-privileges:true 
+    mem_limit: 256m
+    cpus: 0.50
+    pids_limit: 100
+    restart: unless-stopped
+
+  banco:
+    image: mysql:8.4
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?defina DB_ROOT_PASSWORD no .env}
+      MYSQL_DATABASE: ${DB_NAME:?defina DB_NAME no .env}
+      MYSQL_USER: ${DB_USER:?defina DB_USER no .env}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD no .env}
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks: [backend]
+    cap_drop: [ALL]
+    cap_add: [CHOWN, SETUID, SETGID, DAC_OVERRIDE]  
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    mem_limit: 512m
+    cpus: 1.00
+    pids_limit: 200
+    restart: unless-stopped
+
+networks:
+  frontend:
+  backend:
+    internal: true             
+
+volumes:
+  dbdata:
